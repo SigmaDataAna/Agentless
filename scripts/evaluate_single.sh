@@ -20,7 +20,7 @@ CUDA_VISIBLE_DEVICES="0,1,2,3" nohup vllm serve \
 CUDA_VISIBLE_DEVICES="4,5,6,7" nohup vllm serve \
             --task embed \
             --port 8001 \
-            ${GENERATE_MODEL} \
+            ${RETRIEVE_MODEL} \
             > vllm_embed.log 2>&1 &
 
 python agentless/fl/localize.py --file_level \
