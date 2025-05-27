@@ -29,19 +29,23 @@ CUDA_VISIBLE_DEVICES="4,5,6,7" nohup vllm serve \
 
 # Wait until the log file exists
 while [ ! -f "$GENERATE_LOG" ]; do
+  echo "Waiting for vLLM generate server to start..."
   sleep 1
 done
 
 while [ ! -f "$EMBED_LOG" ]; do
+  echo "Waiting for vLLM embed server to start..."
   sleep 1
 done
 
 # Continuously check the log for the ready message
-until grep -q "$READY_MSG" "$GENERATE_LOG"; do
+while grep -q "$READY_MSG" "$GENERATE_LOG"; do
+  echo "Waiting for vLLM generate server to be ready..."
   sleep 1
 done
 
-until grep -q "$READY_MSG" "$EMBED_LOG"; do
+while grep -q "$READY_MSG" "$EMBED_LOG"; do
+  echo "Waiting for vLLM embed server to be ready..."
   sleep 1
 done
 
