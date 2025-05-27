@@ -4,11 +4,24 @@ export OPENAI_API_KEY="EMPTY"
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 export GENERATE_MODEL_URL="http://127.0.0.1:8000/v1"
-export RETRIEVE_MODEL_URL="http://127.0.0.1:8000/v1"
+export RETRIEVE_MODEL_URL="http://127.0.0.1:8001/v1"
 export GENERATE_MODEL='deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'
 export RETRIEVE_MODEL='deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'
 
 export TASK_ID="django__django-10914"
+
+export VLLM_USE_V1=0
+
+CUDA_VISIBLE_DEVICES="0,1,2,3" nohup vllm serve \
+            --port 8000 \
+            ${GENERATE_MODEL} \
+            > vllm_generate.log 2>&1 &
+
+CUDA_VISIBLE_DEVICES="4,5,6,7" nohup vllm serve \
+            --task embed \
+            --port 8001 \
+            ${GENERATE_MODEL} \
+            > vllm_embed.log 2>&1 &
 
 python agentless/fl/localize.py --file_level \
                                 --model=${GENERATE_MODEL} \
