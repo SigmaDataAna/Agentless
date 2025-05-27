@@ -3,8 +3,8 @@
 export OPENAI_API_KEY="EMPTY"
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
-export GENERATE_MODEL_URL="http://127.0.0.1:8000/v1"
-export RETRIEVE_MODEL_URL="http://127.0.0.1:8001/v1"
+export GENERATE_MODEL_URL="http://127.0.0.1:9622/v1"
+export RETRIEVE_MODEL_URL="http://127.0.0.1:9623/v1"
 export GENERATE_MODEL='deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'
 export RETRIEVE_MODEL='deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'
 
@@ -18,13 +18,13 @@ export EMBED_LOG="vllm_embed.log"
 
 cd ..
 CUDA_VISIBLE_DEVICES="0,1,2,3" nohup vllm serve \
-            --port 8000 \
+            --port 9622 \
             ${GENERATE_MODEL} \
             > ${GENERATE_LOG} 2>&1 &
 
 CUDA_VISIBLE_DEVICES="4,5,6,7" nohup vllm serve \
             --task embed \
-            --port 8001 \
+            --port 9623 \
             ${RETRIEVE_MODEL} \
             > ${EMBED_LOG} 2>&1 &
 
