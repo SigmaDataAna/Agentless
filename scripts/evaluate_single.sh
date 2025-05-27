@@ -16,6 +16,7 @@ export READY_MSG="Application startup complete"
 export GENERATE_LOG="vllm_generate.log"
 export EMBED_LOG="vllm_embed.log"
 
+cd ..
 CUDA_VISIBLE_DEVICES="0,1,2,3" nohup vllm serve \
             --port 8000 \
             ${GENERATE_MODEL} \
@@ -41,15 +42,18 @@ done
 # Continuously check the log for the ready message
 while ! grep -q "$READY_MSG" "$GENERATE_LOG"; do
   echo "Waiting for vLLM generate server to be ready..."
+  cat "$GENERATE_LOG"
   sleep 1
 done
 
 while ! grep -q "$READY_MSG" "$EMBED_LOG"; do
   echo "Waiting for vLLM embed server to be ready..."
+  cat "$GENERATE_LOG"
   sleep 1
 done
 
 echo "vLLM servers are ready."
+cd Agentless
 
 python agentless/fl/localize.py --file_level \
                                 --model=${GENERATE_MODEL} \
