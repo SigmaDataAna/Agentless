@@ -12,16 +12,40 @@ export TASK_ID="django__django-10914"
 
 export VLLM_USE_V1=0
 
+export READY_MSG="Application startup complete"
+export GENERATE_LOG="vllm_generate.log"
+export EMBED_LOG="vllm_embed.log"
+
 CUDA_VISIBLE_DEVICES="0,1,2,3" nohup vllm serve \
             --port 8000 \
             ${GENERATE_MODEL} \
-            > vllm_generate.log 2>&1 &
+            > ${GENERATE_LOG} 2>&1 &
 
 CUDA_VISIBLE_DEVICES="4,5,6,7" nohup vllm serve \
             --task embed \
             --port 8001 \
             ${RETRIEVE_MODEL} \
-            > vllm_embed.log 2>&1 &
+            > ${EMBED_LOG} 2>&1 &
+
+# Wait until the log file exists
+while [ ! -f "$GENERATE_LOG" ]; do
+  sleep 1
+done
+
+while [ ! -f "$EMBED_LOG" ]; do
+  sleep 1
+done
+
+# Continuously check the log for the ready message
+until grep -q "$READY_MSG" "$GENERATE_LOG"; do
+  sleep 1
+done
+
+until grep -q "$READY_MSG" "$EMBED_LOG"; do
+  sleep 1
+done
+
+echo "vLLM servers are ready."
 
 python agentless/fl/localize.py --file_level \
                                 --model=${GENERATE_MODEL} \
