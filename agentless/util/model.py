@@ -63,7 +63,7 @@ class OpenAIChatDecoder(DecoderBase):
             model=self.name,
         )
 
-        base_url = os.environ['BASE_URL'] if 'BASE_URL' in os.environ else None
+        base_url = os.environ['GENERATE_MODEL_URL'] if 'GENERATE_MODEL_URL' in os.environ else None
         # print('Using base URL:', base_url)
         ret = request_chatgpt_engine(config, self.logger, base_url=base_url)
         # replace the arguments with environment variables if needed

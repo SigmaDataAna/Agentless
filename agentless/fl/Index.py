@@ -275,8 +275,8 @@ class EmbeddingIndex(ABC):
                 )  # embedding dimension does not matter for mocking.
                 Settings.callback_manager = CallbackManager([token_counter])
             else:
-                base_url = os.environ['BASE_URL'] if 'BASE_URL' in os.environ else None
-                model = os.environ['BASE_MODEL'] if 'BASE_MODEL' in os.environ else None
+                base_url = os.environ['RETRIEVE_MODEL_URL'] if 'RETRIEVE_MODEL_URL' in os.environ else None
+                model = os.environ['RETRIEVE_MODEL'] if 'RETRIEVE_MODEL' in os.environ else None
                 if base_url is not None:
                     embed_model = OpenAIEmbedding(
                         model=model,  # Just a name

@@ -1,0 +1,80 @@
+protocolVersion: 2
+name: swe_bench_evalaute_0527_0
+type: job
+jobRetryCount: 0
+prerequisites:
+  - type: dockerimage
+    uri: >-
+      docker.io/whatcanyousee/verl:ngc-cu124-vllm0.8.4-sglang0.4.5-mcore0.12.0-te2.2
+    name: docker_image0
+taskRoles:
+  worker:
+    instances: 4
+    completion:
+      minFailedInstances: -1
+    taskRetryCount: 0
+    dockerImage: docker_image0
+    resourcePerInstance:
+      gpu: 8
+      cpu: 88
+      memoryMB: 1638400
+    commands:
+      - whoami
+      - echo "prepare network and topology..."
+      - export NCCL_IB_PCI_RELAXED_ORDERING=1
+      - export NCCL_SOCKET_IFNAME=eth0
+      - export CUDA_DEVICE_ORDER=PCI_BUS_ID
+      - export NCCL_NET_GDR_LEVEL=5
+      - export NCCL_NVLS_ENABLE=0
+      - export NCCL_TOPO_FILE=/opt/microsoft/ndv4-topo.xml
+      - export NCCL_DEBUG=WARN
+      - nvidia-smi
+      - echo "Download code..."
+      - cd Agentless
+      - ls -alh .
+      - echo "Install dependencies..."
+      - pip install -r requirements.txt
+      - 'echo "[Used Python Env]"'
+      - pip list
+      - export NODE_RANK=$PAI_CURRENT_TASK_ROLE_CURRENT_TASK_INDEX
+      - export NODE_COUNT=$PAI_TASK_ROLE_TASK_COUNT_worker
+      - 'echo "node rank:"$NODE_RANK'
+      - 'echo "node count:"$NODE_COUNT'
+      - echo "Exam environment variables..."
+      - 'echo "node_rank:"$PAI_CURRENT_TASK_ROLE_CURRENT_TASK_INDEX'
+      - 'echo "master_addr:"$PAI_HOST_IP_worker_0'
+      - 'echo "master_port:"$PAI_PORT_LIST_worker_0_http'
+      - export GPU_PER_NODE_COUNT=8
+      - >-
+        export NUM_PROCESS=$((GPU_PER_NODE_COUNT *
+        PAI_TASK_ROLE_TASK_COUNT_worker))
+      - 'echo "gpu count:"$GPU_PER_NODE_COUNT'
+      - 'echo "node count:"$PAI_TASK_ROLE_TASK_COUNT_worker'
+      - 'echo "num process:"$NUM_PROCESS'
+      - echo "Start Evaluating..."
+      - export OUTPUT_DIR="../swe_data"
+      - mkdir -p ${OUTPUT_DIR}
+      - bash scripts/evaluate_single.sh
+      - echo "End Evaluating..."
+defaults:
+  virtualCluster: h200-sigma-code
+extras:
+  com.microsoft.pai.runtimeplugin:
+    - plugin: ssh
+      parameters:
+        jobssh: true
+        userssh:
+          type: custom
+          value: >-
+            ssh-ed25519
+            AAAAC3NzaC1lZDI1NTE5AAAAIDMgVIPOWou8NcZ2otMeMfAAv6tk3xFjc1PFCfkqeOwm
+            haoling@haolingdeMacBook-Pro.local
+  hivedScheduler:
+    taskRoles:
+      worker:
+        skuNum: 8
+        skuType: H200
+  jobStatusChangeNotification:
+    running: true
+    succeeded: true
+    failed: true
