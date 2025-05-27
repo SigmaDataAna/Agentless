@@ -747,12 +747,12 @@ def main():
         "--model",
         type=str,
         default="gpt-4o-2024-05-13",
-        choices=[
-            "gpt-4o-2024-05-13",
-            "deepseek-coder",
-            "gpt-4o-mini-2024-07-18",
-            "claude-3-5-sonnet-20241022",
-        ],
+        # choices=[
+        #     "gpt-4o-2024-05-13",
+        #     "deepseek-coder",
+        #     "gpt-4o-mini-2024-07-18",
+        #     "claude-3-5-sonnet-20241022",
+        # ],
     )
     parser.add_argument(
         "--backend",
@@ -788,9 +788,9 @@ def main():
 
     args = parser.parse_args()
 
-    assert (not "deepseek" in args.model) or (
-        args.backend == "deepseek"
-    ), "Must specify `--backend deepseek` if using a DeepSeek model"
+    # assert (not "deepseek" in args.model) or (
+    #     args.backend == "deepseek"
+    # ), "Must specify `--backend deepseek` if using a DeepSeek model"
 
     # diff_format and str_replace_format cannot be both True
     assert not (

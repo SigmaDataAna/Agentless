@@ -1,3 +1,4 @@
+import os, sys
 import json
 from abc import ABC, abstractmethod
 from typing import List
@@ -61,7 +62,11 @@ class OpenAIChatDecoder(DecoderBase):
             batch_size=batch_size,
             model=self.name,
         )
-        ret = request_chatgpt_engine(config, self.logger)
+
+        base_url = os.environ['BASE_URL'] if 'BASE_URL' in os.environ else None
+        # print('Using base URL:', base_url)
+        ret = request_chatgpt_engine(config, self.logger, base_url=base_url)
+        # replace the arguments with environment variables if needed
         if ret:
             responses = [choice.message.content for choice in ret.choices]
             completion_tokens = ret.usage.completion_tokens

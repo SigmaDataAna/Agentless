@@ -1,5 +1,5 @@
 import copy
-import os
+import os, sys
 from abc import ABC
 
 import tiktoken
@@ -23,6 +23,24 @@ from agentless.util.preprocess_data import (
     get_full_file_paths_and_classes_and_functions,
 )
 from get_repo_structure.get_repo_structure import parse_python_file
+
+# Mocking 
+from llama_index.embeddings.openai import OpenAIEmbedding, OpenAIEmbeddingModelType, OpenAIEmbeddingMode
+import llama_index.embeddings.openai.base as llama_base
+def my_get_engine(
+    mode: str,
+    model: str,
+    mode_model_dict
+) -> str:
+    """Get engine."""
+    try:
+        key = (OpenAIEmbeddingMode(mode), OpenAIEmbeddingModelType(model))
+    except:
+        key = ''
+    if key not in mode_model_dict:
+        return 'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'
+    return mode_model_dict[key].value
+llama_base.get_engine = my_get_engine
 
 
 def construct_file_meta_data(file_name: str, clazzes: list, functions: list) -> dict:
@@ -257,7 +275,16 @@ class EmbeddingIndex(ABC):
                 )  # embedding dimension does not matter for mocking.
                 Settings.callback_manager = CallbackManager([token_counter])
             else:
-                embed_model = OpenAIEmbedding(model_name="text-embedding-3-small")
+                base_url = os.environ['BASE_URL'] if 'BASE_URL' in os.environ else None
+                model = os.environ['BASE_MODEL'] if 'BASE_MODEL' in os.environ else None
+                if base_url is not None:
+                    embed_model = OpenAIEmbedding(
+                        model=model,  # Just a name
+                        api_base=base_url,
+                        api_key="EMPTY",  # any dummy string if key is not required
+                    )
+                else:
+                    embed_model = OpenAIEmbedding(model_name="text-embedding-3-small")
             index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
             index.storage_context.persist(persist_dir=persist_dir)
         else:
