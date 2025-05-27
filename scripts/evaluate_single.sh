@@ -39,12 +39,12 @@ while [ ! -f "$EMBED_LOG" ]; do
 done
 
 # Continuously check the log for the ready message
-while grep -q "$READY_MSG" "$GENERATE_LOG"; do
+while ! grep -q "$READY_MSG" "$GENERATE_LOG"; do
   echo "Waiting for vLLM generate server to be ready..."
   sleep 1
 done
 
-while grep -q "$READY_MSG" "$EMBED_LOG"; do
+while ! grep -q "$READY_MSG" "$EMBED_LOG"; do
   echo "Waiting for vLLM embed server to be ready..."
   sleep 1
 done
