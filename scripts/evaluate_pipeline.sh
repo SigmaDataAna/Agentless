@@ -16,6 +16,7 @@ export READY_MSG="Application startup complete"
 export GENERATE_LOG="vllm_generate.log"
 export EMBED_LOG="vllm_embed.log"
 
+
 cd ..
 CUDA_VISIBLE_DEVICES="0,1,2,3" nohup vllm serve \
             --port 9622 \
@@ -59,6 +60,8 @@ python agentless/fl/localize.py --file_level \
                                 --output_folder ${OUTPUT_DIR}/agentless_results \
                                 --skip_existing 
 
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+
 python agentless/fl/localize.py --file_level \
                                 --model=${GENERATE_MODEL} \
                                 --backend=openai \
@@ -67,6 +70,8 @@ python agentless/fl/localize.py --file_level \
                                 --num_threads 10 \
                                 --skip_existing 
 
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+
 python agentless/fl/retrieve.py --index_type simple \
                                 --filter_type given_files \
                                 --filter_file ${OUTPUT_DIR}/agentless_results_irrelevant/loc_outputs.jsonl \
@@ -74,10 +79,14 @@ python agentless/fl/retrieve.py --index_type simple \
                                 --persist_dir embedding/swe-bench_simple \
                                 --num_threads 10 
 
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+
 python agentless/fl/combine.py  --retrieval_loc_file ${OUTPUT_DIR}/retrievel_embedding/retrieve_locs.jsonl \
                                 --model_loc_file ${OUTPUT_DIR}/agentless_results/loc_outputs.jsonl \
                                 --top_n 3 \
                                 --output_folder ${OUTPUT_DIR}/file_level_combined 
+
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/localize.py --related_level \
                                 --model=${GENERATE_MODEL} \
@@ -89,6 +98,8 @@ python agentless/fl/localize.py --related_level \
                                 --start_file ${OUTPUT_DIR}/file_level_combined/combined_locs.jsonl \
                                 --num_threads 10 \
                                 --skip_existing 
+
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/localize.py --fine_grain_line_level \
                                 --model=${GENERATE_MODEL} \
@@ -102,6 +113,8 @@ python agentless/fl/localize.py --fine_grain_line_level \
                                 --num_threads 10 \
                                 --skip_existing 
 
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+
 python agentless/fl/localize.py --merge \
                                 --model=${GENERATE_MODEL} \
                                 --backend=openai \
@@ -109,6 +122,8 @@ python agentless/fl/localize.py --merge \
                                 --top_n 3 \
                                 --num_samples 4 \
                                 --start_file ${OUTPUT_DIR}/edit_location_samples/loc_outputs.jsonl 
+
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/repair/repair.py --loc_file ${OUTPUT_DIR}/edit_location_individual/loc_merged_0-0_outputs.jsonl \
                                   --output_folder ${OUTPUT_DIR}/repair_sample_0 \
@@ -121,5 +136,4 @@ python agentless/repair/repair.py --loc_file ${OUTPUT_DIR}/edit_location_individ
                                   --gen_and_process \
                                   --num_threads 2 
 
-export SAS_KEY="?sv=2023-01-03&st=2025-05-27T10%3A50%3A58Z&se=2025-06-01T10%3A50%3A00Z&skoid=93dcab78-2e9c-4cca-8417-3c59080fb09d&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-05-27T10%3A50%3A58Z&ske=2025-06-01T10%3A50%3A00Z&sks=b&skv=2023-01-03&sr=c&sp=racwdxltf&sig=%2BHZD74evsvdvAzxZlF08THOgHGtWPcFQLKe%2Bs80QvBw%3D"
-azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
