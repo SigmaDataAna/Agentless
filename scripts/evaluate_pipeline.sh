@@ -60,7 +60,7 @@ python agentless/fl/localize.py --file_level \
                                 --output_folder ${OUTPUT_DIR}/agentless_results \
                                 --skip_existing 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/localize.py --file_level \
                                 --model=${GENERATE_MODEL} \
@@ -70,7 +70,7 @@ python agentless/fl/localize.py --file_level \
                                 --num_threads 10 \
                                 --skip_existing 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/retrieve.py --index_type simple \
                                 --filter_type given_files \
@@ -79,14 +79,14 @@ python agentless/fl/retrieve.py --index_type simple \
                                 --persist_dir embedding/swe-bench_simple \
                                 --num_threads 10 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/combine.py  --retrieval_loc_file ${OUTPUT_DIR}/retrievel_embedding/retrieve_locs.jsonl \
                                 --model_loc_file ${OUTPUT_DIR}/agentless_results/loc_outputs.jsonl \
                                 --top_n 3 \
                                 --output_folder ${OUTPUT_DIR}/file_level_combined 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/localize.py --related_level \
                                 --model=${GENERATE_MODEL} \
@@ -99,7 +99,7 @@ python agentless/fl/localize.py --related_level \
                                 --num_threads 10 \
                                 --skip_existing 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/localize.py --fine_grain_line_level \
                                 --model=${GENERATE_MODEL} \
@@ -113,7 +113,7 @@ python agentless/fl/localize.py --fine_grain_line_level \
                                 --num_threads 10 \
                                 --skip_existing 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/fl/localize.py --merge \
                                 --model=${GENERATE_MODEL} \
@@ -123,7 +123,7 @@ python agentless/fl/localize.py --merge \
                                 --num_samples 4 \
                                 --start_file ${OUTPUT_DIR}/edit_location_samples/loc_outputs.jsonl 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
 
 python agentless/repair/repair.py --loc_file ${OUTPUT_DIR}/edit_location_individual/loc_merged_0-0_outputs.jsonl \
                                   --output_folder ${OUTPUT_DIR}/repair_sample_0 \
@@ -136,4 +136,4 @@ python agentless/repair/repair.py --loc_file ${OUTPUT_DIR}/edit_location_individ
                                   --gen_and_process \
                                   --num_threads 2 
 
-./scripts/azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
+./azcopy copy --recursive ${OUTPUT_DIR} "https://shuailu1.blob.core.windows.net/tianyu/swe_bench/${GENERATE_MODEL}/${SAS_KEY}"
